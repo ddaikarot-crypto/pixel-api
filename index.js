@@ -14,11 +14,11 @@ app.get("/get_pixels", async (req, res) => {
         const pixels = [];
 
         for (let y = 0; y < 39; y++) {
-    for (let x = 51; x >= 0; x--) {
-        const c = Jimp.intToRGBA(image.getPixelColor(x, y));
-        pixels.push([c.r, c.g, c.b]);
-    }
-}
+            for (let x = 0; x < 51; x++) {
+                const c = Jimp.intToRGBA(image.getPixelColor(x, y));
+                pixels.push([c.r, c.g, c.b]);
+            }
+        }
 
         res.json(pixels);
     } catch (e) {
