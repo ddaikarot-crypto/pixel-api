@@ -9,7 +9,10 @@ app.get("/get_pixels", async (req, res) => {
         if (!url) return res.status(400).send("missing url");
 
         const image = await Jimp.read(url);
+        
         image.resize(51, 39);
+        
+        image.flip(true, false);
 
         const pixels = [];
 
