@@ -2,8 +2,9 @@ const express = require("express");
 const Jimp = require("jimp");
 const app = express();
 
+// Route mặc định để tránh lỗi "Cannot GET /"
 app.get("/", (req, res) => {
-    res.send("API Painter đang hoạt động! Hãy dùng /get_pixels?url=...");
+    res.send("API Painter Online is Running!");
 });
 
 app.get("/get_pixels", async (req, res) => {
@@ -13,12 +14,14 @@ app.get("/get_pixels", async (req, res) => {
 
         const image = await Jimp.read(url);
         
+        // 1. Resize chuẩn cho 51x39 blocks
         image.resize(51, 39);
 
+        // 2. FIX LỖI TRÁI PHẢI (Lật ngang ảnh)
         image.flip(true, false);
 
         const pixels = [];
-
+        // Quét pixel theo hàng (y) và cột (x)
         for (let y = 0; y < 39; y++) {
             for (let x = 0; x < 51; x++) {
                 const color = Jimp.intToRGBA(image.getPixelColor(x, y));
@@ -28,12 +31,12 @@ app.get("/get_pixels", async (req, res) => {
 
         res.json(pixels);
     } catch (e) {
-        console.error(e);
-        res.status(500).send("error processing image");
+        res.status(500).send("error");
     }
 });
 
+// Render yêu cầu port phải lấy từ process.env.PORT
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`http://localhost:${PORT}`);
+    console.log(`Server started on port ${PORT}`);
 });
