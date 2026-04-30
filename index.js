@@ -1,7 +1,10 @@
 const express = require("express");
 const Jimp = require("jimp");
-
 const app = express();
+
+app.get("/", (req, res) => {
+    res.send("API Painter đang hoạt động! Hãy dùng /get_pixels?url=...");
+});
 
 app.get("/get_pixels", async (req, res) => {
     try {
@@ -11,22 +14,26 @@ app.get("/get_pixels", async (req, res) => {
         const image = await Jimp.read(url);
         
         image.resize(51, 39);
-        
+
         image.flip(true, false);
 
         const pixels = [];
 
         for (let y = 0; y < 39; y++) {
             for (let x = 0; x < 51; x++) {
-                const c = Jimp.intToRGBA(image.getPixelColor(x, y));
-                pixels.push([c.r, c.g, c.b]);
+                const color = Jimp.intToRGBA(image.getPixelColor(x, y));
+                pixels.push([color.r, color.g, color.b]);
             }
         }
 
         res.json(pixels);
     } catch (e) {
-        res.status(500).send("error");
+        console.error(e);
+        res.status(500).send("error processing image");
     }
 });
 
-app.listen(process.env.PORT || 3000);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server đang chạy tại: http://localhost:${PORT}`);
+});
