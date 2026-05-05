@@ -3,7 +3,7 @@ const Jimp = require("jimp");
 const app = express();
  
 app.get("/", (req, res) => {
-    res.send("API Painter Online is Running!");
+    res.send("API");
 });
  
 app.get("/get_pixels", async (req, res) => {
@@ -11,18 +11,16 @@ app.get("/get_pixels", async (req, res) => {
         const url = req.query.url;
         if (!url) return res.status(400).send("missing url");
  
-        // Lấy kích thước từ query, mặc định 51x39
         const w = parseInt(req.query.w) || 51;
         const h = parseInt(req.query.h) || 39;
  
-        // Giới hạn an toàn
         if (w < 1 || h < 1 || w > 200 || h > 200)
             return res.status(400).send("invalid dimensions");
  
         const image = await Jimp.read(url);
  
         image.resize(w, h);
-        image.flip(true, false); // Fix lỗi trái phải
+        image.flip(true, false);
  
         const pixels = [];
         for (let y = 0; y < h; y++) {
